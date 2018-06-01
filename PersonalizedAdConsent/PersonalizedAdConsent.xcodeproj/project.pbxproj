@@ -6,6 +6,20 @@
 	objectVersion = 48;
 	objects = {
 
+/* Begin PBXAggregateTarget section */
+		9CA1593220C13E030052C56F /* Universal Static Framework */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 9CA1593520C13E030052C56F /* Build configuration list for PBXAggregateTarget "Universal Static Framework" */;
+			buildPhases = (
+				9CA1593620C13E2B0052C56F /* ShellScript */,
+			);
+			dependencies = (
+			);
+			name = "Universal Static Framework";
+			productName = "Universal Static Framework";
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXBuildFile section */
 		5A20E048208A788A0012D068 /* PACView.h in Headers */ = {isa = PBXBuildFile; fileRef = 5A20E046208A788A0012D068 /* PACView.h */; };
 		5A20E049208A788A0012D068 /* PACView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5A20E047208A788A0012D068 /* PACView.m */; };
@@ -144,6 +158,10 @@
 						CreatedOnToolsVersion = 9.3;
 						ProvisioningStyle = Automatic;
 					};
+					9CA1593220C13E030052C56F = {
+						CreatedOnToolsVersion = 9.3;
+						ProvisioningStyle = Automatic;
+					};
 				};
 			};
 			buildConfigurationList = 5A92D2992076961800FFE51D /* Build configuration list for PBXProject "PersonalizedAdConsent" */;
@@ -159,6 +177,7 @@
 			projectRoot = "";
 			targets = (
 				5A92D29E2076961800FFE51D /* PersonalizedAdConsent */,
+				9CA1593220C13E030052C56F /* Universal Static Framework */,
 			);
 		};
 /* End PBXProject section */
@@ -172,6 +191,22 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		9CA1593620C13E2B0052C56F /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Merge Script\n\n# 1\n# Set bash script to exit immediately if any commands fail.\nset -e\n\n# 2\n# Setup some constants for use later on.\nFRAMEWORK_NAME=\"PersonalizedAdConsent\"\n\n# 3\n# Build the framework for device and for simulator (using\n# all needed architectures).\nxcodebuild  -target \"${FRAMEWORK_NAME}\" \\\n-sdk iphoneos \\\n-configuration Debug \\\nOTHER_CFLAGS=\"-fembed-bitcode -Qunused-arguments\" \\\nDEPLOYMENT_POSTPROCESSING=YES \\\nCONFIGURATION_BUILD_DIR=\"${SRCROOT}/../build/iphones\" \\\nclean build\n\nxcodebuild  -target \"${FRAMEWORK_NAME}\" \\\n-sdk iphonesimulator \\\n-configuration Debug \\\nOTHER_CFLAGS=\"-fembed-bitcode -Qunused-arguments\" \\\nCONFIGURATION_BUILD_DIR=\"${SRCROOT}/../build/iphonesimulator\" \\\nclean build\n\n# 4\n# Remove .framework file if exists on Release dir from previous run.\nif [ -d \"${SRCROOT}/../SDK/${FRAMEWORK_NAME}.framework\" ]; then\nrm -rf \"${SRCROOT}/../SDK/${FRAMEWORK_NAME}.framework\"\nfi\n\n# 5\n# Copy the simulator version of framework to Desktop.\nrm -rf \"${SRCROOT}/../build/iphonesimulator/${FRAMEWORK_NAME}.framework/_CodeSignature\"\nmkdir -p \"${SRCROOT}/../SDK/${FRAMEWORK_NAME}.framework\"\ncp -r \"${SRCROOT}/../build/iphonesimulator/${FRAMEWORK_NAME}.framework/\" \"${SRCROOT}/../SDK/${FRAMEWORK_NAME}.framework/\"\nrm -rf \"${SRCROOT}/../SDK/${FRAMEWORK_NAME}.framework/Info.plist\"\n\n# 6\n# Replace the framework executable within the framework with\n# a new version created by merging the device and simulator\n# frameworks' executables with lipo.\nlipo -create -output \"${SRCROOT}/../SDK/${FRAMEWORK_NAME}.framework/${FRAMEWORK_NAME}\" \\\n\"${SRCROOT}/../build/iphonesimulator/${FRAMEWORK_NAME}.framework/${FRAMEWORK_NAME}\" \\\n\"${SRCROOT}/../build/iphones/${FRAMEWORK_NAME}.framework/${FRAMEWORK_NAME}\"\n\n# 7\n# Copy resources\nmkdir -p \"${SRCROOT}/../SDK/${FRAMEWORK_NAME}.framework/Resources\"\nresources=$(find ${SRCROOT} -iname \"*.bundle\")\nfor resource in ${resources[@]}; do\ncp -r \"$resource\" \"${SRCROOT}/../SDK/${FRAMEWORK_NAME}.framework/Resources/\"\ndone\n\nrm -rf \"${SRCROOT}/../build\"\nrm -rf \"${SRCROOT}/build\"";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		5A92D29A2076961800FFE51D /* Sources */ = {
@@ -350,6 +385,26 @@
 			};
 			name = Release;
 		};
+		9CA1593320C13E030052C56F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = WG4VFF78ZM;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		9CA1593420C13E030052C56F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = WG4VFF78ZM;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -367,6 +422,15 @@
 			buildConfigurations = (
 				5A92D2B42076961800FFE51D /* Debug */,
 				5A92D2B52076961800FFE51D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		9CA1593520C13E030052C56F /* Build configuration list for PBXAggregateTarget "Universal Static Framework" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9CA1593320C13E030052C56F /* Debug */,
+				9CA1593420C13E030052C56F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
